@@ -3,11 +3,13 @@ import express from "express";
 import { SlackRoutes } from "./routes/slack.routes";
 import { init_slack } from "./slack/init";
 import { setupAppMentionHandler } from "./slack/actions/app_mention";
+import { openAIInit } from "./openai/init";
 
 config();
 
 // initializations
-const { expressReceiever, slack } = init_slack();
+const ai = openAIInit();
+const { expressReceiever, slack } = init_slack(ai);
 
 // router configurations
 const slackRouter = new SlackRoutes(slack);

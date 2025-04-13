@@ -1,6 +1,9 @@
 import { App } from "@slack/bolt";
+import { ThreadMessage } from "../../models/ThreadMessage";
+import OpenAI from "openai";
+import { settleDisagreement } from "../../openai/settleDisagreement";
 
-export function setupAppMentionHandler(app: App) {
+export function setupAppMentionHandler(app: App, openAi: OpenAI) {
   app.event("app_mention", async (thing) => {
     const { event, say, client } = thing;
     try {
@@ -14,20 +17,20 @@ export function setupAppMentionHandler(app: App) {
         return;
       }
 
-      const response = await say({
-        text: "Processing your request...",
-        thread_ts: event.thread_ts,
-      });
-
-      const replies = await client.conversations.replies({
+      const thread = await client.conversations.replies({
         channel: event.channel,
         ts: event.thread_ts,
       });
 
-      const messages = replies.messages || [];
+      const messages: ThreadMessage[] = (thread.messages || []).map((msg) => ({
+        user: msg.user || "unknown",
+        text: msg.text || "",
+      }));
+
+      const response = await settleDisagreement(openAi, messages);
+
       await say({
-        text: `You mentioned me with: "${message}"\n Here are the messages in the thread:
-        ${messages.map((msg) => `- ${msg.text}`).join("\n")}`,
+        text: response,
         thread_ts: event.thread_ts || event.ts,
       });
     } catch (error) {
