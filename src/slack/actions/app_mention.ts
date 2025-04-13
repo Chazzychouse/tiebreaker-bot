@@ -8,7 +8,6 @@ export function setupAppMentionHandler(app: App, openAi: OpenAI) {
     const { event, say, client } = thing;
     try {
       // Get the message text without the bot mention
-      const message = event.text.replace(/<@[^>]+>/g, "").trim();
       if (!event.thread_ts) {
         await say({
           text: "Please mention me in the thread you want me to respond to.",
