@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
+    "deploy": "ngrok http http://localhost:3000",
     "build": "tsc",
     "watch": "tsc -w"
   },
@@ -13,7 +14,11 @@
     "type": "git",
     "url": "git+https://gitlab.com/JordanUpperman/tiebreaker-bot.git"
   },
-  "keywords": ["slack", "openai", "bot"],
+  "keywords": [
+    "slack",
+    "openai",
+    "bot"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
